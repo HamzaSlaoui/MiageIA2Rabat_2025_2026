@@ -71,6 +71,12 @@ function setup() {
    tailleVehiculeSlider = createSlider(4, 64, 16, 1);
   tailleVehiculeSlider.position(920, 100);
   tailleVehiculeSlider.size(80);
+
+  // label pour la taille des véhicules
+  let labelTailleVehicule = createDiv('Taille Véhicule:')
+  labelTailleVehicule.position(790, 100);
+  labelTailleVehicule.style('color', 'black');
+  labelTailleVehicule.style('font-size', '14px');
   
 }
 
