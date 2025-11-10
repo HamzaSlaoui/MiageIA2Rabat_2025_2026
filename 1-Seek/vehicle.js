@@ -21,23 +21,45 @@ class Vehicle {
   }
   // seek est une méthode qui permet de faire se rapprocher le véhicule de la cible passée en paramètre
   seek(target) {
+
+    /* Si on voulait un rayon de detection circulaire
+
+
+    // On dessine un cercle atour du véhicule pour visualiser
+    // la distance de détection
+    push();
+    noFill();
+    stroke("white");
+    circle(this.pos.x, this.pos.y, 200);
+    pop();
+
+    // Je n'applique la force de seek que si la cible
+    // est dans le cercle de détection de rayon 200
+    if (p5.Vector.dist(this.pos, target) > 100) {
+      return createVector(0, 0);
+    }
+
+    */
+   
     // on calcule la direction vers la cible
     // C'est l'ETAPE 1 (action : se diriger vers une cible)
-    let force = p5.Vector.sub(target, this.pos);
+    let desiredSpeed = p5.Vector.sub(target, this.pos);
 
     // Dessous c'est l'ETAPE 2 : le pilotage (comment on se dirige vers la cible)
     // on limite ce vecteur à la longueur maxSpeed
-    force.setMag(this.maxSpeed);
+    desiredSpeed.setMag(this.maxSpeed);
 
     // Si on s'arrête ici, force = desiredSpeed
 
     // on calcule maintenant force = desiredSpeed - currentSpeed
-    force.sub(this.vel);
+    let force = p5.Vector.sub(desiredSpeed, this.vel);
+
     // et on limite cette force à la longueur maxForce
     force.limit(this.maxForce);
     return force;
   }
 
+  // fuit
   flee(target) {
     // inverse de seek !
     return this.seek(target).mult(-1);
