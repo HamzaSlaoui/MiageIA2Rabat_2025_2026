@@ -9,7 +9,13 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1920, 800);
+  createCanvas(windowWidth, windowHeight);
+
+  const nbVehicles = 1;
+  for (let i = 0; i < nbVehicles; i++) {
+    let vehicle = new Vehicle(100, 100, imageFusee);
+    vehicles.push(vehicle);
+  }
 
   // On cree des sliders pour régler les paramètres
   creerSlidersPourProprietesVehicules();
@@ -17,7 +23,57 @@ function setup() {
   //TODO : creerSliderPourNombreDeVehicules(nbVehicles);
   creerSliderPourNombreDeVehicules(nbVehicles);
 
-  //TODO : creerSliderPourLongueurCheminDerriereVehicules(20);
+  //TODO :
+  creerSliderPourLongueurCheminDerriereVehicules(20);
+}
+
+function creerSliderPourNombreDeVehicules(nbVehiclesInitial) {
+  let nbVehiculesSlider = createSlider(1, 100, nbVehiclesInitial, 1);
+  // ecouteur sur le slider pour recréer les véhicules
+  nbVehiculesSlider.input(() => {
+    // on vide le tableau
+    vehicles = [];
+    // on recrée les véhicules
+    for (let i = 0; i < nbVehiculesSlider.value(); i++) {
+      let vehicle = new Vehicle(width / 2, height / 2, imageFusee);
+      vehicles.push(vehicle);
+    }
+  });
+  nbVehiculesSlider.position(160, 230);
+
+  // je crée un label juste devant en X
+  let labelNbVehicules = createDiv("Nb véhicules:");
+  labelNbVehicules.position(10, 230);
+  labelNbVehicules.style("color", "white");
+
+  // affichage de la valeur du slider
+  let valueSpan = createSpan(nbVehiculesSlider.value());
+  valueSpan.position(310, 230);
+  valueSpan.style("color", "white");
+  valueSpan.html(nbVehiculesSlider.value());
+}
+
+function creerSliderPourLongueurCheminDerriereVehicules(longueurInitiale) {
+  let longueurCheminSlider = createSlider(10, 120, longueurInitiale, 1);
+
+  // ecouteur sur le slider pour modifier la propriété pathLength de chaque véhicule
+  longueurCheminSlider.input(() => {
+    vehicles.forEach((vehicle) => {
+      vehicle.pathLength = longueurCheminSlider.value();
+    });
+  });
+  longueurCheminSlider.position(160, 270);
+
+  // je crée un label juste devant en X
+  let labelLongueurChemin = createDiv("Longueur chemin:");
+  labelLongueurChemin.position(10, 270);
+  labelLongueurChemin.style("color", "white");
+
+  // affichage de la valeur du slider
+  let valueSpan = createSpan(longueurCheminSlider.value());
+  valueSpan.position(310, 270);
+  valueSpan.style("color", "white");
+  valueSpan.html(longueurCheminSlider.value());
 }
 
 function creerSliderPourNombreDeVehicules(nbInitial) {

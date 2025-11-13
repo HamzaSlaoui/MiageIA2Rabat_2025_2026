@@ -8,6 +8,7 @@ class Vehicle {
     this.maxSpeed = 4;
     this.maxForce = 0.2;
     this.r = 46;
+
     // sprite image du véhicule
     this.image = image;
 
@@ -24,6 +25,74 @@ class Vehicle {
   }
 
   wander() {
+    // point devant le véhicule, centre du cercle
+    let wanderPoint = this.vel.copy();
+    wanderPoint.setMag(this.distanceCercle);
+    wanderPoint.add(this.pos);
+
+    if (Vehicle.debug) {
+      // on dessine le cercle en rouge
+      // on le dessine sous la forme d'une petit cercle rouge
+      fill("red");
+      noStroke();
+      circle(wanderPoint.x, wanderPoint.y, 8);
+
+      // on dessine le cercle autour
+      // Cercle autour du point
+      noFill();
+      stroke("white");
+      circle(wanderPoint.x, wanderPoint.y, this.wanderRadius * 2);
+
+      // on dessine une ligne qui relie le vaisseau à ce point
+      // c'est la ligne blanche en face du vaisseau
+      line(this.pos.x, this.pos.y, wanderPoint.x, wanderPoint.y);
+    }
+
+    // On va s'occuper de calculer le point vert SUR LE CERCLE
+    // il fait un angle wanderTheta avec le centre du cercle
+    // l'angle final par rapport à l'axe des X c'est l'angle du vaisseau
+    // + cet angle
+    let theta = this.wanderTheta + this.vel.heading();
+
+    let x = this.wanderRadius * cos(theta);
+    let y = this.wanderRadius * sin(theta);
+
+    // on rajoute ces distances au point rouge au centre du cercle
+    wanderPoint.add(x, y);
+
+    if (Vehicle.debug) {
+      // on le dessine sous la forme d'un cercle vert
+      fill("green");
+      noStroke();
+      circle(wanderPoint.x, wanderPoint.y, 16);
+
+      // on dessine le vecteur qui va du centre du vaisseau
+      // à ce point vert sur le cercle
+      noFill();
+      stroke("white");
+
+      // on dessine une ligne qui relie le vaisseau à ce point
+      // c'est la ligne blanche en face du vaisseau
+      line(this.pos.x, this.pos.y, wanderPoint.x, wanderPoint.y);
+    }
+
+    // entre chaque image on va déplacer aléatoirement
+    // le point vert en changeant un peu son angle...
+    this.wanderTheta += random(-this.displaceRange, this.displaceRange);
+
+    // D'après l'article, la force est égale au vecteur qui va du
+    // centre du vaisseau, à ce point vert. On va aussi la limiter
+    // à this.maxForce
+    let force = p5.Vector.sub(wanderPoint, this.pos);
+    // On met la force à maxForce
+    force.setMag(this.maxForce);
+    // on applique la force
+    this.applyForce(force);
+
+    // et on la renvoie au cas où....
+    return force;
+  }
+  wander1() {
     // point devant le véhicule, centre du cercle
     let wanderPoint = this.vel.copy();
     wanderPoint.setMag(this.distanceCercle);
@@ -53,6 +122,13 @@ class Vehicle {
 
     let x = this.wanderRadius * cos(theta);
     let y = this.wanderRadius * sin(theta);
+
+    if (Vehicle.debug) {
+      // on le dessine sous la forme d'un cercle vert
+      fill(0, 255, 0);
+      noStroke();
+      circle(wanderPoint.x, wanderPoint.y, 16);
+    }
 
     // maintenant wanderPoint c'est un point sur le cercle
     wanderPoint.add(x, y);
@@ -138,6 +214,7 @@ class Vehicle {
     this.path.push(this.pos.copy());
 
     // si le tableau a plus de this.pathLength éléments, on vire le plus ancien
+
     if (this.path.length > this.pathLength) {
       this.path.shift();
     }
@@ -147,8 +224,8 @@ class Vehicle {
     // dessin du chemin
     this.path.forEach((p, index) => {
       if (!(index % 3)) {
-        stroke(255);
-        fill(255);
+        stroke(this.pathColor);
+        fill(this.pathColor);
         circle(p.x, p.y, 1);
       }
     });

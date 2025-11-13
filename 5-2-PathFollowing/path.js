@@ -11,6 +11,7 @@ class Path {
       strokeWeight(2);
       line(this.start.x, this.start.y, this.end.x, this.end.y);
   
+      // second parametre  de stroke() est l'opacité
       stroke(255, 100);
       strokeWeight(this.radius * 2);
       line(this.start.x, this.start.y, this.end.x, this.end.y);
