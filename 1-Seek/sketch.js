@@ -1,5 +1,5 @@
 let target, target2, vehicle;
-let vitesseMaxSlider, accelerationMaxSlider, tailleVehiculeSlider ;
+let vitesseMaxSlider, accelerationMaxSlider, tailleVehiculeSlider;
 // tableau de véhicules
 let vehicles = [];
 // nombre initial de véhicules
@@ -25,7 +25,7 @@ function setup() {
   // la cible mobile
   target2 = new Target(random(width), random(height));
 
-   // On crée un slider pour régler la vitesse max des véhicules
+  // On crée un slider pour régler la vitesse max des véhicules
   // On crée le slider et on le positionne
   // les paramètres sont : min, max, valeur initiale, pas
   vitesseMaxSlider = createSlider(1, 20, 10, 1);
@@ -33,10 +33,10 @@ function setup() {
   vitesseMaxSlider.size(80);
 
   // je crée un label juste devant en X
-  let labelVitesseMax = createDiv('Vitesse Max:')
+  let labelVitesseMax = createDiv("Vitesse Max:");
   labelVitesseMax.position(810, 10);
-  labelVitesseMax.style('color', 'black');
-  labelVitesseMax.style('font-size', '14px');
+  labelVitesseMax.style("color", "black");
+  labelVitesseMax.style("font-size", "14px");
 
   // On crée un slider pour régler la vitesse max des véhicules
   // On crée le slider et on le positionne
@@ -46,10 +46,10 @@ function setup() {
   accelerationMaxSlider.size(80);
 
   // je crée un label juste devant en X
-  let labelAccelerationMax = createDiv('Force Max:')
+  let labelAccelerationMax = createDiv("Force Max:");
   labelAccelerationMax.position(810, 40);
-  labelAccelerationMax.style('color', 'black');
-  labelAccelerationMax.style('font-size', '14px');
+  labelAccelerationMax.style("color", "black");
+  labelAccelerationMax.style("font-size", "14px");
 
   // On cree un curseur pour indiquer le nombre de véhicules
   // a l'écran
@@ -66,22 +66,21 @@ function setup() {
   nbVehiculesSlider.size(80);
 
   // je crée un label juste devant en X
-  let labelNbVehicules = createDiv('Véhicules:')
+  let labelNbVehicules = createDiv("Véhicules:");
   labelNbVehicules.position(790, 70);
-  labelNbVehicules.style('color', 'black');
-  labelNbVehicules.style('font-size', '14px');
+  labelNbVehicules.style("color", "black");
+  labelNbVehicules.style("font-size", "14px");
 
   // Je cree un slider pour changer la taille des véhicules
-   tailleVehiculeSlider = createSlider(4, 64, 16, 1);
+  tailleVehiculeSlider = createSlider(4, 64, 16, 1);
   tailleVehiculeSlider.position(920, 100);
   tailleVehiculeSlider.size(80);
 
   // label pour la taille des véhicules
-  let labelTailleVehicule = createDiv('Taille Véhicule:')
+  let labelTailleVehicule = createDiv("Taille Véhicule:");
   labelTailleVehicule.position(790, 100);
-  labelTailleVehicule.style('color', 'black');
-  labelTailleVehicule.style('font-size', '14px');
-  
+  labelTailleVehicule.style("color", "black");
+  labelTailleVehicule.style("font-size", "14px");
 }
 
 function creerVehicules(nb) {
@@ -117,14 +116,14 @@ function draw() {
   // On dessine aussi la cible mobile
   target2.vel.x += random(-0.5, 0.5);
   target2.vel.y += random(-0.5, 0.5);
-  
+
   target2.update();
   target2.edges();
   target2.show();
 
   // TODO :au lieu d'afficher un seul véhicule
   // faire une boucle pour afficher plusieurs véhicules
-  vehicles.forEach(vehicle => {
+  vehicles.forEach((vehicle) => {
     // On récupère la valeur du slider et on la met dans la vitesse max du véhicule
     vehicle.maxSpeed = vitesseMaxSlider.value();
     // On récupère l'accelération max du slider et on la met dans la force max du véhicule
@@ -137,7 +136,7 @@ function draw() {
     // Detecter si collision avec la cible
     // on calcule la distance avec la cible
     let d = p5.Vector.dist(vehicle.pos, target2.pos);
-    if(d < vehicle.r) {
+    if (d < vehicle.r) {
       // il y a collision
       // on déplace le vehicule à une position aléatoire
       vehicle.pos.x = random(width);
