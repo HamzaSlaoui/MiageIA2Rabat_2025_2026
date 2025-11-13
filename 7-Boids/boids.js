@@ -6,7 +6,6 @@
 class Boid {
   static debug = false;
   constructor(x, y, image) {
-
     this.pos = createVector(x, y);
 
     this.vel = p5.Vector.random2D();
@@ -45,7 +44,7 @@ class Boid {
 
     // Paramètres comportement confinement
     this.boundariesX = 0;
-    this.boundariesY = 0
+    this.boundariesY = 0;
     this.boundariesWidth = width;
     this.boundariesHeight = height;
     this.boundariesDistance = 25;
@@ -64,7 +63,13 @@ class Boid {
     let alignment = this.align(boids);
     let cohesion = this.cohesion(boids);
     let separation = this.separation(boids);
-    let boundaries = this.boundaries(this.boundariesX, this.boundariesY, this.boundariesWidth, this.boundariesHeight, this.boundariesDistance);
+    let boundaries = this.boundaries(
+      this.boundariesX,
+      this.boundariesY,
+      this.boundariesWidth,
+      this.boundariesHeight,
+      this.boundariesDistance
+    );
     //let boundaries = this.boundaries(100, 200, 800, 400, 25);
 
     alignment.mult(this.alignWeight);
@@ -166,27 +171,30 @@ class Boid {
   }
 
   flee(target) {
-    // inverse de seek ! 
+    // inverse de seek !
     let force = this.seek(target).mult(-1);
     return force;
   }
 
   fleeWithTargetRadius(target) {
+    // Calcul de la distance entre le boid et la target
     const d = this.pos.dist(target.pos);
+    // Zone de répulsion = rayon de la target + offset de 10 pixels
     let rayonZoneAFuir = target.r + 10;
 
-    
-
+    // Si le boid est dans la zone de répulsion
     if (d < rayonZoneAFuir) {
-      // On dessine le cercle de la zone à fuir
+      // On dessine le cercle de la zone à fuir en rouge
       push();
       stroke("red");
       strokeWeight(2);
-      circle(target.pos.x, target.pos.y, rayonZoneAFuir*2);
-    pop();
+      noFill();
+      circle(target.pos.x, target.pos.y, rayonZoneAFuir * 2);
+      pop();
 
-      // je fuis la cible, on réutilise le comportement flee
+      // Je fuis la cible, on réutilise le comportement flee
       const fleeForce = this.flee(target.pos);
+      // On multiplie par un facteur élevé pour une répulsion forte
       fleeForce.mult(100);
       this.applyForce(fleeForce);
     }
@@ -220,7 +228,10 @@ class Boid {
     // + cet angle
     let wanderAngle = this.vel.heading() + this.wanderTheta;
     // on calcule les coordonnées du point vert
-    let pointSurCercle = createVector(this.wanderRadius * cos(wanderAngle), this.wanderRadius * sin(wanderAngle));
+    let pointSurCercle = createVector(
+      this.wanderRadius * cos(wanderAngle),
+      this.wanderRadius * sin(wanderAngle)
+    );
     // on ajoute la position du vaisseau
     pointSurCercle.add(centreCercleDevant);
 
@@ -230,14 +241,12 @@ class Boid {
       fill("lightGreen");
       circle(pointSurCercle.x, pointSurCercle.y, 8);
 
-      // on dessine une ligne qui va du vaisseau vers le point sur le 
+      // on dessine une ligne qui va du vaisseau vers le point sur le
       // cercle
       line(this.pos.x, this.pos.y, pointSurCercle.x, pointSurCercle.y);
-
     }
     // on dessine le vecteur desiredSpeed qui va du vaisseau au point vert
     let desiredSpeed = p5.Vector.sub(pointSurCercle, this.pos);
-
 
     // On a donc la vitesse désirée que l'on cherche qui est le vecteur
     // allant du vaisseau au cercle vert. On le calcule :
@@ -259,7 +268,7 @@ class Boid {
   // Lorsque le véhicule s'approche d'un bord vertical ou horizontal
   // on calcule la vitesse désirée dans la direction "réfléchie" par
   // rapport au bord (comme au billard).
-  // Par exemple, si le véhicule s'approche du bord gauche à moins de 
+  // Par exemple, si le véhicule s'approche du bord gauche à moins de
   // 25 pixels (valeur par défaut de la variable d),
   // on calcule la vitesse désirée en gardant le x du vecteur vitesse
   // et en mettant son y positif. x vaut maxSpeed et y vaut avant une valeur
@@ -278,7 +287,7 @@ class Boid {
 
     // si le véhicule est trop à gauche ou trop à droite
     if (this.pos.x < xBordGauche) {
-      // 
+      //
       vitesseDesiree = createVector(this.maxSpeed, this.vel.y);
     } else if (this.pos.x > xBordDroite) {
       vitesseDesiree = createVector(-this.maxSpeed, this.vel.y);
@@ -320,7 +329,7 @@ class Boid {
     let plusPetiteDistance = Infinity;
     let vehiculeLePlusProche;
 
-    vehicules.forEach(v => {
+    vehicules.forEach((v) => {
       if (v != this) {
         // Je calcule la distance entre le vaisseau et le vehicule
         const distance = this.pos.dist(v.pos);
@@ -333,7 +342,6 @@ class Boid {
 
     return vehiculeLePlusProche;
   }
-
 
   applyForce(force) {
     this.acc.add(force);
@@ -356,7 +364,7 @@ class Boid {
 
       // J'ai rajouté PI car l'image était à l'envers
       rotate(this.vel.heading() + Math.PI);
-      
+
       image(this.image, 0, 0, this.r, this.r);
 
       pop();
@@ -381,5 +389,4 @@ class Boid {
       this.pos.y = height;
     }
   }
-
 }

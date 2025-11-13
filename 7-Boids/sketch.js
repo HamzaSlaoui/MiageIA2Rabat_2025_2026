@@ -14,10 +14,13 @@ let labelNbBoids;
 let target;
 let requin;
 
+// Tableau d'obstacles
+const obstacles = [];
+
 function preload() {
   // On charge une image de poisson
-  fishImage = loadImage('assets/niceFishtransparent.png');
-  requinImage = loadImage('assets/requin.png');
+  fishImage = loadImage("assets/niceFishtransparent.png");
+  requinImage = loadImage("assets/requin.png");
 }
 
 function setup() {
@@ -27,13 +30,73 @@ function setup() {
   // flocking en anglais c'est "se rassembler"
   // rappel : tableauDesVehicules, min max val step posX posY propriété
   const posYSliderDeDepart = 10;
-  creerUnSlider("Poids alignment", flock, 0, 2, 1.5, 0.1, 10, posYSliderDeDepart, "alignWeight");
-  creerUnSlider("Poids cohesion", flock, 0, 2, 1, 0.1, 10, posYSliderDeDepart+30, "cohesionWeight");
-  creerUnSlider("Poids séparation", flock, 0, 15, 3, 0.1, 10, posYSliderDeDepart+60,"separationWeight");
-  creerUnSlider("Poids boundaries", flock, 0, 15, 10, 1, 10, posYSliderDeDepart+90,"boundariesWeight");
-  
-  creerUnSlider("Rayon des boids", flock, 4, 40, 6, 1, 10, posYSliderDeDepart+120,"r");
-  creerUnSlider("Perception radius", flock, 15, 60, 25, 1, 10, posYSliderDeDepart+150,"perceptionRadius");
+  creerUnSlider(
+    "Poids alignment",
+    flock,
+    0,
+    2,
+    1.5,
+    0.1,
+    10,
+    posYSliderDeDepart,
+    "alignWeight"
+  );
+  creerUnSlider(
+    "Poids cohesion",
+    flock,
+    0,
+    2,
+    1,
+    0.1,
+    10,
+    posYSliderDeDepart + 30,
+    "cohesionWeight"
+  );
+  creerUnSlider(
+    "Poids séparation",
+    flock,
+    0,
+    15,
+    3,
+    0.1,
+    10,
+    posYSliderDeDepart + 60,
+    "separationWeight"
+  );
+  creerUnSlider(
+    "Poids boundaries",
+    flock,
+    0,
+    15,
+    10,
+    1,
+    10,
+    posYSliderDeDepart + 90,
+    "boundariesWeight"
+  );
+
+  creerUnSlider(
+    "Rayon des boids",
+    flock,
+    4,
+    40,
+    6,
+    1,
+    10,
+    posYSliderDeDepart + 120,
+    "r"
+  );
+  creerUnSlider(
+    "Perception radius",
+    flock,
+    15,
+    60,
+    25,
+    1,
+    10,
+    posYSliderDeDepart + 150,
+    "perceptionRadius"
+  );
 
   // On créer les "boids". Un boid en anglais signifie "un oiseau" ou "un poisson"
   // Dans cet exemple c'est l'équivalent d'un véhicule dans les autres exemples
@@ -44,39 +107,51 @@ function setup() {
   }
 
   // Créer un label avec le nombre de boids présents à l'écran
-   labelNbBoids = createP("Nombre de boids : " + flock.length);
+  labelNbBoids = createP("Nombre de boids : " + flock.length);
   // couleur blanche
-  labelNbBoids.style('color', 'white');
-  labelNbBoids.position(10, posYSliderDeDepart+180);
+  labelNbBoids.style("color", "white");
+  labelNbBoids.position(10, posYSliderDeDepart + 180);
 
-  // target qui suit la souris
-  target = createVector(mouseX, mouseY);
-  target.r = 50;
+  // target qui suit la souris - c'est maintenant un objet avec position et rayon
+  target = {
+    pos: createVector(mouseX, mouseY),
+    r: 50,
+  };
 
   // requin prédateur
-  requin = new Boid(width/2, height/2, requinImage);
+  requin = new Boid(width / 2, height / 2, requinImage);
   requin.r = 40;
   requin.maxSpeed = 7;
   requin.maxForce = 0.5;
 }
 
-function creerUnSlider(label, tabVehicules, min, max, val, step, posX, posY, propriete) {
+function creerUnSlider(
+  label,
+  tabVehicules,
+  min,
+  max,
+  val,
+  step,
+  posX,
+  posY,
+  propriete
+) {
   let slider = createSlider(min, max, val, step);
-  
+
   let labelP = createP(label);
   labelP.position(posX, posY);
-  labelP.style('color', 'white');
+  labelP.style("color", "white");
 
   slider.position(posX + 150, posY + 17);
 
   let valueSpan = createSpan(slider.value());
-  valueSpan.position(posX + 300, posY+17);
-  valueSpan.style('color', 'white');
+  valueSpan.position(posX + 300, posY + 17);
+  valueSpan.style("color", "white");
   valueSpan.html(slider.value());
 
   slider.input(() => {
     valueSpan.html(slider.value());
-    tabVehicules.forEach(vehicle => {
+    tabVehicules.forEach((vehicle) => {
       vehicle[propriete] = slider.value();
     });
   });
@@ -90,28 +165,37 @@ function draw() {
   //imageMode(CORNER);
   //image(requinImage, 0, 0, width, height);
 
-    // mettre à jour le nombre de boids
-    labelNbBoids.html("Nombre de boids : " + flock.length);
+  // mettre à jour le nombre de boids
+  labelNbBoids.html("Nombre de boids : " + flock.length);
 
-    // on dessine la cible qui suit la souris
-    target.x = mouseX;
-    target.y = mouseY;
+  // on dessine la cible qui suit la souris
+  target.pos.x = mouseX;
+  target.pos.y = mouseY;
 
-    push();
-    fill("lightgreen");
-    noStroke();
-    ellipse(target.x, target.y, target.r, target.r);
-     pop();
+  push();
+  fill("lightgreen");
+  noStroke();
+  ellipse(target.pos.x, target.pos.y, target.r * 2, target.r * 2);
+  pop();
 
   for (let boid of flock) {
     // équivalent de applyBehaviors, cohesion + separation + alignenement + confinement
     boid.flock(flock);
 
+    // Nouveau comportement : répulsion par la target (souris)
+    boid.fleeWithTargetRadius(target);
+
+    // Répulsion par le requin
     boid.fleeWithTargetRadius(requin);
+
+    // Répulsion par tous les obstacles
+    for (let obstacle of obstacles) {
+      boid.fleeWithTargetRadius(obstacle);
+    }
 
     boid.update();
     boid.show();
-  }  
+  }
 
   // REQUIN
   let wanderForce = requin.wander();
@@ -124,14 +208,19 @@ function draw() {
   // dessin du cercle en fil de fer jaune
   noFill();
   stroke("yellow");
-  ellipse(requin.pos.x, requin.pos.y, rayonDeDetection*2, rayonDeDetection*2);
+  ellipse(
+    requin.pos.x,
+    requin.pos.y,
+    rayonDeDetection * 2,
+    rayonDeDetection * 2
+  );
 
   let closest = requin.getVehiculeLePlusProche(flock);
 
   if (closest) {
     // distance entre le requin et le poisson le plus proche
     let d = p5.Vector.dist(requin.pos, closest.pos);
-    if(d < rayonDeDetection) {
+    if (d < rayonDeDetection) {
       // on fonce vers le poisson !!!
       seekForce = requin.seek(closest.pos);
       seekForce.mult(7);
@@ -147,25 +236,35 @@ function draw() {
   requin.edges();
   requin.update();
   requin.show();
+
+  // Dessiner tous les obstacles
+  for (let obstacle of obstacles) {
+    obstacle.show();
+  }
 }
 
 function mouseDragged() {
   const b = new Boid(mouseX, mouseY, fishImage);
-  
+
   b.r = random(8, 40);
 
   flock.push(b);
-
-
 }
 
 function keyPressed() {
- if (key === 'd') {
+  console.log("Touche pressée:", key);
+
+  if (key === "d") {
     Boid.debug = !Boid.debug;
-  } else if (key === 'r') {
+  } else if (key === "r") {
     // On donne une taille différente à chaque boid
-    flock.forEach(b => {
+    flock.forEach((b) => {
       b.r = random(8, 40);
     });
+  } else if (key === "o" || key === "O") {
+    // Créer un nouvel obstacle à la position de la souris
+    const couleur = color(0, 255, 0);
+    const obstacle = new Obstacle(mouseX, mouseY, random(30, 80), couleur);
+    obstacles.push(obstacle);
   }
 }
