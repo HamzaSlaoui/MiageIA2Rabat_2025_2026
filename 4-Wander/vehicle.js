@@ -1,6 +1,6 @@
 class Vehicle {
   static debug = false;
-  
+
   constructor(x, y, image) {
     this.pos = createVector(x, y);
     this.vel = createVector(1, 0);
@@ -11,7 +11,6 @@ class Vehicle {
     // sprite image du véhicule
     this.image = image;
 
-
     // pour comportement wander
     this.distanceCercle = 150;
     this.wanderRadius = 50;
@@ -20,6 +19,8 @@ class Vehicle {
 
     // trainée derrière les véhicules
     this.path = [];
+    // longueur du chemin (nombre de points) pour la traînée
+    this.pathLength = 100;
   }
 
   wander() {
@@ -137,8 +138,9 @@ class Vehicle {
     this.path.push(this.pos.copy());
 
     // si le tableau a plus de this.pathLength éléments, on vire le plus ancien
-    // TODO
-
+    if (this.path.length > this.pathLength) {
+      this.path.shift();
+    }
   }
 
   show() {
@@ -171,8 +173,6 @@ class Vehicle {
     imageMode(CENTER);
     image(this.image, 0, 0, this.r * 2, this.r * 2);
     pop();
-
-
   }
 
   edges() {
